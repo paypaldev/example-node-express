@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PayPal Checkout Demo</title>
+  </head>
+  <body>
+    <h1>PayPal Checkout Demo</h1>
+    <p>Demo product &mdash; <strong>£9.99 GBP</strong></p>
+
+    <div id="paypal-button-container">
+      <paypal-button></paypal-button>
+    </div>
+
+    <pre id="result"></pre>
+
+    <script type="module" defer>
+      // This function is called when a PayPal checkout session is created.
+      // It creates an order on the server and returns the order ID to the PayPal SDK.
+      async function createOrder() {
+        const response = await fetch("/api/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ itemId: "demo-product" }),
+        });
+        const data = await response.json();
+        return { orderId: data.id }; // <-- Required return value
+      }
+
+      // This function is called when the buyer approves the payment on the PayPal side.
+      // It captures the order on the server and returns the capture result to the PayPal SDK.
+      async function onApprove(data) {
+        const response = await fetch(`/api/orders/${data.orderId}/capture`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+        const responseData = await response.json();
+
+        if (responseData.status === "COMPLETED") {
+          document.getElementById("result").textContent =
+            "Payment completed successfully!";
+        } else {
+          document.getElementById("result").textContent =
+            `Payment status: ${responseData.status}`;
+        }
+      }
+
+      // Now we load the PayPal SDK.
+      // We're dynamically loading the SDK script so that we can use the client ID and environment from our server.
+      // The environment allows us to switch between sandbox and live modes without changing the client-side code.
+      const response = await fetch("/api/config");
+      const { clientId, sdkUrl } = await response.json();
+
+      // This promise resolves once the PayPal SDK script has loaded, allowing us to create a PayPal instance.
+      await new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = `${sdkUrl}`;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+
+      // Create a PayPal instance with the client ID and environment.
+      const sdk = await window.paypal.createInstance({
+        clientId: clientId,
+        components: ["paypal-payments"],
+        pageType: "checkout",
+      });
+
+      // When the button is clicked, we start the PayPal payment session.
+      // We call createOrder() to create an order on the server and get the order ID.
+      // This order ID is then passed to the PayPal SDK to start the checkout flow.
+      paypalButton.addEventListener("click", async () => {
+        const session =
+          sdk.createPayPalOneTimePaymentSession({
+            onApprove: onApprove
+        });
+
+        await session.start(
+          { presentationMode: "auto" }, // Auto-detects best presentation mode
+          createOrder(),
+        );
+      });
+
+      // We can now show the PayPal button and attach a click handler to start the payment session.
+      // The button is hidden by default until the PayPal SDK is loaded and the session is created.
+      // You don't need to use the PayPal button; you can use your own button and call 
+      // session.start() when it's clicked.
+      const paypalButton = document.querySelector("paypal-button");
+      paypalButton.removeAttribute("hidden");
+    </script>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "paypal-example",
+  "version": "1.0.0",
+  "description": "Minimal Express + TypeScript PayPal Checkout demo",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "tsx src/server.ts"
+  },
+  "dependencies": {
+    "@paypal/paypal-server-sdk": "^2.4.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.5",
+    "tsx": "^4.22.5",
+    "typescript": "^5.7.3"
+  }
+}

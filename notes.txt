@@ -1,0 +1,106 @@
+What I searched for:
+
+"paypal api signup"
+
+Featured google snippet - "How do I create PayPal REST API credentials?
+
+Click: https://www.paypal.com/pm/cshelp/article/how-do-i-create-paypal-rest-api-credentials-ts1949
+Click: https://developer.paypal.com/
+Click: https://developer.paypal.com/dashboard/applications/sandbox
+ 
+Did login with biometrics to my usual paypal account
+
+Created a merchant account (I just guessed)
+
+Got creds:
+
+Display App Name
+DemoApp
+
+Client ID
+AZn-mV1JOMETU6m9ZGKZrii6qxJlik1bEYRhUQZ7iWuGrQziAZ6B2XS0xJ3JLRADMqTjsZ4za_K5dP8b
+
+Secret key 1
+EAsUWtZl56m-hWE8c9Av_ONliSE3RqGfAwjExYRkz5F_kreeikW_H9QMq_CF5Pw3OmKy5SrftNxzZc8k
+
+Clicked the banner: PayPal JavaScript SDK v6 is Now Available! Get Started
+
+This page is bollocks: https://docs.paypal.ai/developer/how-to/sdk/js/v6/configuration#option-a-client-id-recommended
+
+
+---
+
+Yes following this guide is fucking horrible.
+Too many options, not scenario based, lots of "are you doing this thing" that I have never heard of
+
+Also the examples are folded away so I missed the useful one for at least 5 minutes
+
+---
+
+What the fuck is paypal-button meant to be, I added a regular button but I'm guessing it's a special SDK thing that's not introduced
+the app.js example looks like it might work but seems to be missing ui setup
+
+OH LOL I"M meant to just use <paypal-button> because it's a web component. That's not explained anywhere I just guessed.
+
+Ok so after guessing and pasting that in I have a button
+
+Then I clicked it after pasting the configure button code and got:
+
+installHook.js:1
+ PayPal payment start error: ReferenceError: createOrder is not defined
+    at Dt.<anonymous> ((index):85:38)
+﻿
+
+Guess imma debug
+
+Oh there's more code to copy pasta
+
+LOL THE CREATE ORDER FUNCTION TO COPY DOESNT INCLUDE THE FUNCTION NAME
+
+It reads:
+
+```js
+// In v6, this must return an object with the shape: { orderId: "YOUR_ORDER_ID" }
+  return fetch("/paypal-api/checkout/orders/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(orderPayload),
+  })
+    .then(response => response.json())
+    .then(data => ({ orderId: data.id })); // <-- Required return value
+} // End createOrder
+```
+
+Which I am left to guess is calling an API on my server side. This is fucking awful.
+
+Oh well, at least Copilot autocompleted that server side call for me.
+
+ok that started a payment, now googling test cards
+
+Found this link on google: https://developer.paypal.com/tools/sandbox/card-testing/
+
+using Diners Club - 36461510000039 - no didn't work.
+
+Generated a test card:
+
+Card number
+4698468654510112
+Expiry date
+12/2028
+CVC code
+231
+
+That worked, but I hadn't implemented the captureOrder callback correctly.
+
+LOL that's because the sample code calls captureOrder that's not in any of the sample code so fails by default.
+
+Let's autocmomplete one....
+
+OK now I have a completed payment with the copy paste nonsense from the webpage, I'll clean it up now into something actually not bullshit.
+
+
+
+
+

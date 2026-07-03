@@ -106,7 +106,7 @@ This is a demo. Before using anything like it in production you'd want to:
 - Replace the in-memory `products` and `orders` maps with a real database (the
   order store here is lost on restart).
 - Compute order amounts from a real cart rather than a single hardcoded
-  `demo-product` (currently `£9.99 GBP`).
+  `demo-product` (currently `$9.99 USD`).
 - Add input validation, authentication, idempotency, and verification of
   PayPal [webhooks](https://developer.paypal.com/api/rest/webhooks/) for
   reliable payment confirmation.

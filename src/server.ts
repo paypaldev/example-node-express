@@ -17,7 +17,7 @@ const paypalSettings = {
 type Item = { amount: { currencyCode: string; value: string }; description: string; };
 const orders = new Map<string, { order: any; captureResponse?: any }>();
 const products = new Map<string, Item>([
-  ["demo-product", { amount: { currencyCode: "GBP", value: "9.99" }, description: "Demo product" }],
+  ["demo-product", { amount: { currencyCode: "USD", value: "9.99" }, description: "Demo product" }],
 ]);
 
 // Create a PayPal OrdersController instance to handle order creation and capture.
